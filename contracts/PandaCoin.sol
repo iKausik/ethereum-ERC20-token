@@ -5,7 +5,6 @@ import "hardhat/console.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract PandaCoin is ERC20, Ownable, ERC20Burnable {
     event tokenMinted(address indexed owner, uint256 amount, string message);
@@ -20,6 +19,7 @@ contract PandaCoin is ERC20, Ownable, ERC20Burnable {
     // initial PAC minting
     constructor() ERC20("PandaCoin", "PAC") {
         _mint(msg.sender, 1000 * 10**decimals());
+
         emit tokenMinted(
             msg.sender,
             1000 * 10**decimals(),
@@ -30,6 +30,7 @@ contract PandaCoin is ERC20, Ownable, ERC20Burnable {
     // mint additional PAC by the owner
     function mint(address _to, uint256 _amount) public onlyOwner {
         _mint(_to, _amount);
+
         emit additionalTokenMinted(
             msg.sender,
             _amount,
@@ -40,6 +41,7 @@ contract PandaCoin is ERC20, Ownable, ERC20Burnable {
     // burn PAC by the owner
     function burn(uint256 _amount) public override onlyOwner {
         _burn(msg.sender, _amount);
+
         emit tokenBurned(msg.sender, _amount, "Token burned");
     }
 
@@ -50,12 +52,17 @@ contract PandaCoin is ERC20, Ownable, ERC20Burnable {
         }
 
         require(_amount <= 10, "You can request a max of 10 PAC at a time.");
-        transfer(_to, _amount);
+        _transfer(owner(), _to, _amount);
 
         emit tokenRequested(
             msg.sender,
             _amount,
             "Requested PAC Token sent to the given address"
         );
+    }
+
+    // check PAC balance
+    function myTokenBalance() public view returns (uint256) {
+        return balanceOf(msg.sender);
     }
 }
