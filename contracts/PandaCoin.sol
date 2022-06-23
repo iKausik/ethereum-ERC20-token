@@ -29,7 +29,7 @@ contract PandaCoin is ERC20, Ownable, ERC20Burnable {
 
     // mint additional PAC by the owner
     function mint(address _to, uint256 _amount) public onlyOwner {
-        _mint(_to, _amount);
+        _mint(_to, _amount * 10**decimals());
 
         emit additionalTokenMinted(
             msg.sender,
@@ -40,19 +40,22 @@ contract PandaCoin is ERC20, Ownable, ERC20Burnable {
 
     // burn PAC by the owner
     function burn(uint256 _amount) public override onlyOwner {
-        _burn(msg.sender, _amount);
+        _burn(msg.sender, _amount * 10**decimals());
 
         emit tokenBurned(msg.sender, _amount, "Token burned");
     }
 
     // request PAC by anyone
     function requestToken(address _to, uint256 _amount) public {
-        if (totalSupply() < 100) {
+        if (balanceOf(owner()) < 100 * 10**decimals()) {
             _mint(owner(), 1000 * 10**decimals());
         }
 
-        require(_amount <= 10, "You can request a max of 10 PAC at a time.");
-        _transfer(owner(), _to, _amount);
+        require(
+            _amount * 10**decimals() <= 10 * 10**decimals(),
+            "You can request a max of 10 PAC at a time."
+        );
+        _transfer(owner(), _to, _amount * 10**decimals());
 
         emit tokenRequested(
             msg.sender,
