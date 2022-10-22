@@ -10,9 +10,9 @@ dotenv.config();
 const config: HardhatUserConfig = {
   solidity: "0.8.14",
   networks: {
-    rinkeby: {
-      url: `${process.env.ALCHEMY_RINKEBY_URL}`,
-      accounts: [`${process.env.RINKEBY_PRIVATE_KEY}`],
+    goerli: {
+      url: `${process.env.ALCHEMY_GOERLI_URL}`,
+      accounts: [`${process.env.MY_WALLET_PRIVATE_KEY}`],
     },
   },
   etherscan: {
